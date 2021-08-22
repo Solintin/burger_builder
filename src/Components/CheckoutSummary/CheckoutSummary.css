@@ -1,0 +1,16 @@
+.checkout-summary{
+    text-align: center;
+    width: 100%;
+    margin : auto;
+    padding-top: 30px;
+}
+.checkout-summary .btn{
+    display: flex;
+    justify-content: space-between;
+}
+
+@media(min-width : 600px){
+    .checkout-summary{
+        width: 500px;
+    }
+}

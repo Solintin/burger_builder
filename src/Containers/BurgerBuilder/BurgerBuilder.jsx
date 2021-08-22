@@ -29,31 +29,22 @@ export class BurgerBuilder extends Component {
 
   //Handlers
   handleContinueOrder = () => {
-    this.setState({ loading: true });
-    const order = {
-      ingredient: this.state.ingredient,
-      price: this.state.totalPrice,
-      customer: {
-        name: "Alley Soliu",
-        address: {
-          street: "Niger State",
-          zipCode: 123456,
-          country: "Nigeria",
-        },
-        email: "alley@test.com",
-      },
-      deliveryMethod: "Home",
-    };
-    axios
-      .post(`/orders.json`, order)
-      .then((response) => {
-        this.setState({ loading: false, purchasing: false });
-        console.log(response);
-      })
-      .catch((err) => {
-        this.setState({ loading: false, purchasing: false });
-        console.log(err);
-      });
+    this.props.history.push("/checkout");
+ 
+    const queryParams = [];
+    for (let i in this.state.ingredient) {
+      queryParams.push(
+        encodeURIComponent(i) +
+          "=" +
+          encodeURIComponent(this.state.ingredient[i])
+      );
+    }
+    queryParams.push('price='  + this.state.totalPrice);  
+    const queryString = queryParams.join('&')
+    this.props.history.push({
+      pathname: "/checkout",
+      search: "?"+queryString,
+    });
   };
   handleBackdropClick = () => {
     this.setState({ purchasing: false });
@@ -119,7 +110,10 @@ export class BurgerBuilder extends Component {
       )
       .then((res) => {
         this.setState({ ingredient: res.data });
-      }).catch((err) => { this.setState({fetchError : true}) });
+      })
+      .catch((err) => {
+        this.setState({ fetchError: true });
+      });
     this.updatePurchaseState();
   }
   render() {
@@ -137,17 +131,26 @@ export class BurgerBuilder extends Component {
     }
 
     // the burger Component is to have spinner whilst the burger fetches from backend
-    // also displays error if error occured in fetch  
-    let burger = this.state.fetchError ? <p style={ {
-      marginTop : '70px', textAlign : "center", color : 'red'
-    }}>Error While Loading Burger</p> :  <Spinner />;
+    // also displays error if error occured in fetch
+    let burger = this.state.fetchError ? (
+      <p
+        style={{
+          marginTop: "70px",
+          textAlign: "center",
+          color: "red",
+        }}
+      >
+        Error While Loading Burger
+      </p>
+    ) : (
+      <Spinner />
+    );
 
     // burger Component  and summary enables after data fetch is true
     if (this.state.ingredient) {
       burger = (
         <>
           <Burger ingredients={this.state.ingredient} />
-
           <BuildControls
             handleAddIngredient={this.handleAddIngredient}
             handleRemoveIngredient={this.handleRemoveIngredient}

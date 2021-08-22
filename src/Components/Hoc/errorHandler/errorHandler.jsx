@@ -20,8 +20,8 @@ const errorHandler = (WrappedComponent, axios) => {
 
     componentWillUnmount(){
       //call the interceptors instance/reference
-      axios.interceptors.request(this.reqInterceptor)
-      axios.interceptors.response(this.resInterceptor)
+      axios.interceptors.request.eject(this.reqInterceptor)
+      axios.interceptors.response.eject(this.resInterceptor)
     }
     
 

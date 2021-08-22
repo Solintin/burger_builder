@@ -1,24 +1,17 @@
 import "./NavigationItems.css";
+import { NavLink } from "react-router-dom";
 
-const activeLink = {
-    checkout : false,
-    burgerBuilder : true
-}
+
 
 function NavigationItems() {
-    
   return (
     <div>
       <ul className="NavigationItems">
         <li>
-          <a href="/" className={`${activeLink.burgerBuilder ? "active" : null}`}>
-            Burger Builder
-          </a>
+          <NavLink to="/">Burger Builder</NavLink>
         </li>
         <li>
-          <a href="/" className={`${activeLink.checkout ? "active" : null}`}>
-            Checkout
-          </a>
+          <NavLink to="/order">Checkout</NavLink>
         </li>
       </ul>
     </div>
