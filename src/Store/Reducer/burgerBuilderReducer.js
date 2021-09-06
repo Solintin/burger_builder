@@ -13,31 +13,31 @@ INGREDIENT_PRICES : {
   fetchError: false,
 };
 
-const reducer = (state = initialState, action) => {
+const burgerBuilderReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.ADD_INGREDIENT:
       return {
         ...state,
         ingredients: {
           ...state.ingredients,
-          [action.ingredientName]: state.ingredients[action.ingredientName] + 1,
+          [action.payload]: state.ingredients[action.payload] + 1,
         },
-        totalPrice : state.totalPrice +  state.INGREDIENT_PRICES[action.ingredientName]
+        totalPrice : state.totalPrice +  state.INGREDIENT_PRICES[action.payload]
       };
     case actionTypes.REMOVE_INGREDIENT:
       return {
         ...state,
         ingredients: {
           ...state.ingredients,
-          [action.ingredientName]: state.ingredients[action.ingredientName] - 1,
+          [action.payload]: state.ingredients[action.payload] - 1,
         },
-        totalPrice : state.totalPrice - state.INGREDIENT_PRICES[action.ingredientName]
+        totalPrice : state.totalPrice - state.INGREDIENT_PRICES[action.payload]
 
       };
       case actionTypes.SET_INGREDIENT:
         return {
           ...state,
-          ingredients : action.ingredientName,
+          ingredients : action.payload,
           fetchError : false,
           totalPrice : 40
         }
@@ -51,4 +51,4 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-export default reducer;
+export default burgerBuilderReducer;

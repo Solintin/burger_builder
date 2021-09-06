@@ -1,20 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import { createStore, applyMiddleware, combineReducers } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
 
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
+
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
 import { Provider } from "react-redux";
-import reducer from "./Store/Reducer/burgerBuilder";
 import thunk from 'redux-thunk'
 import orderReducer from './Store/Reducer/orderReducer';
-import burgerBuilder from './Store/Reducer/burgerBuilder';
+import burgerBuilderReducer from './Store/Reducer/burgerBuilderReducer';
 
 const rootReducer = combineReducers({
-  burgerBuilder : burgerBuilder,
+  burgerBuilder : burgerBuilderReducer,
   order : orderReducer
 })
 

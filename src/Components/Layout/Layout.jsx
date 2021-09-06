@@ -25,10 +25,7 @@ export class Layout extends Component {
   componentDidMount (){
     window.addEventListener('resize', this.handleDimension)
   }
-  componentWillUnmount(){
-    window.removeEventListener('resize', this.handleDimension)
 
-  }
   render() {
     return (
       <div>

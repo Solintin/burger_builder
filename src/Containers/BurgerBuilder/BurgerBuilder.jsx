@@ -35,7 +35,6 @@ export class BurgerBuilder extends Component {
     const sum = ingredientVal.reduce((sum, el) => {
       return (sum += el);
     }, 0);
-    console.log(sum);
     return sum <= 0;
   };
   // handleAddIngredient = (type) => {
@@ -87,12 +86,13 @@ export class BurgerBuilder extends Component {
   }
   render() {
     //Logic handling Less than burger Ingredients
-    const disabledInfo = {
+    let disabledInfo = {
       ...this.props.storeIngredients,
     };
     for (let val in disabledInfo) {
       disabledInfo[val] = disabledInfo[val] <= 0 ? true : false;
     }
+   console.log(disabledInfo);
     let orderSummary = null;
 
     // the burger Component is to have spinner whilst the burger fetches from backend
