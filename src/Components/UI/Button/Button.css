@@ -6,7 +6,7 @@
   font: inherit;
   padding: 10px;
   margin: 10px;
-  font-weight: bold; 
+  font-weight: bold;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
@@ -18,22 +18,24 @@
 
 .Success {
   color: #5c9210;
-  background : rgb(170, 238, 69);
-  color : rgb(33, 151, 33)
+  background: rgb(170, 238, 69);
+  color: rgb(33, 151, 33);
 }
-.Success:hover{
-    background : rgb(150, 236, 20);
-    transition: all 0.5s ease-out;
+.Success:hover {
+  background: rgb(150, 236, 20);
+  transition: all 0.5s ease-out;
 }
 
 .Danger {
   color: #ee4e4e;
-  background : rgb(236, 165, 165);
+  background: rgb(236, 165, 165);
 }
 .Danger:hover {
-    transition: all 0.5s ease-out;
-    background : rgb(228, 103, 103);
-    color: #e62828;
-
-
+  transition: all 0.5s ease-out;
+  background: rgb(228, 103, 103);
+  color: #e62828;
+}
+.Button:disabled {
+  cursor: not-allowed;
+  background: #ccc;
 }

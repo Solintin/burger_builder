@@ -37,7 +37,7 @@ export class Layout extends Component {
         closed={this.sideDrawerCloseHandler}
         />
         <Toolbar sideBarHandler={this.sideBarHandler}/>
-        <main> {this.props.children} </main>
+        <main style={{paddingTop : '70px'}}> {this.props.children} </main>
       </div>
     );
   }

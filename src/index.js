@@ -1,15 +1,44 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
+
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import reducer from "./Store/Reducer/burgerBuilder";
+import thunk from 'redux-thunk'
+import orderReducer from './Store/Reducer/orderReducer';
+import burgerBuilder from './Store/Reducer/burgerBuilder';
 
-ReactDOM.render(
+const rootReducer = combineReducers({
+  burgerBuilder : burgerBuilder,
+  order : orderReducer
+})
+
+
+
+
+const logger = store =>{
+  return next => {
+    return action => {
+      const result = next(action);
+      return result
+      
+    }
+  }
+}
+
+const store = createStore(rootReducer,   composeWithDevTools((applyMiddleware(logger, thunk))));
+ReactDOM.render( 
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>,
   document.getElementById("root")
 );

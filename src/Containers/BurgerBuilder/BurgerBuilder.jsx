@@ -4,47 +4,24 @@ import Burger from "../../Components/Burger/Burger";
 import OrderSummary from "../../Components/Burger/OrderSummary/OrderSummary";
 import Modal from "../../Components/UI/Modal/Modal";
 import axios from "../../axios-orders";
+import { connect } from "react-redux";
+import * as actionTypes from "../../Store/Action/bugerBuilderAct";
+import * as orderAction from "../../Store/Action/orderAct";
 // import axios from 'axios';
 
 import Spinner from "../../Components/UI/Spinner/Spinner";
 import errorHandler from "../../Components/Hoc/errorHandler/errorHandler";
 
-const INGREDIENT_PRICES = {
-  salad: 10,
-  bacon: 5,
-  cheese: 7,
-  meat: 10,
-};
-
 export class BurgerBuilder extends Component {
   state = {
-    ingredient: null,
-    totalPrice: 10,
-    purchaseable: false,
     purchasing: false,
-    loading: false,
-    fetchError: false,
   };
   // LifeCycles
 
   //Handlers
   handleContinueOrder = () => {
+    this.props.onInitPurchased();
     this.props.history.push("/checkout");
- 
-    const queryParams = [];
-    for (let i in this.state.ingredient) {
-      queryParams.push(
-        encodeURIComponent(i) +
-          "=" +
-          encodeURIComponent(this.state.ingredient[i])
-      );
-    }
-    queryParams.push('price='  + this.state.totalPrice);  
-    const queryString = queryParams.join('&')
-    this.props.history.push({
-      pathname: "/checkout",
-      search: "?"+queryString,
-    });
   };
   handleBackdropClick = () => {
     this.setState({ purchasing: false });
@@ -53,86 +30,74 @@ export class BurgerBuilder extends Component {
     this.setState({ purchasing: true });
   };
   updatePurchaseState = () => {
-    const ingredientCopy = { ...this.state.ingredient };
+    const ingredientCopy = { ...this.props.storeIngredients };
     const ingredientVal = Object.values(ingredientCopy);
     const sum = ingredientVal.reduce((sum, el) => {
       return (sum += el);
     }, 0);
-    this.setState({ purchaseable: sum <= 0 ? true : false });
+    console.log(sum);
+    return sum <= 0;
   };
-  handleAddIngredient = (type) => {
-    const oldCount = this.state.ingredient[type];
-    const updatedCount = oldCount + 1;
-    const updatedIngredient = {
-      ...this.state.ingredient,
-    };
-    updatedIngredient[type] = updatedCount;
+  // handleAddIngredient = (type) => {
+  //   const oldCount = this.state.ingredient[type];
+  //   const updatedCount = oldCount + 1;
+  //   const updatedIngredient = {
+  //     ...this.state.ingredient,
+  //   };
+  //   updatedIngredient[type] = updatedCount;
 
-    const PriceAddition = INGREDIENT_PRICES[type];
-    const oldPrice = this.state.totalPrice;
-    let newPrice = oldPrice + PriceAddition;
+  //   const PriceAddition = INGREDIENT_PRICES[type];
+  //   const oldPrice = this.state.totalPrice;
+  //   let newPrice = oldPrice + PriceAddition;
 
-    this.setState(
-      {
-        ingredient: updatedIngredient,
-        totalPrice: newPrice,
-      },
-      () => this.updatePurchaseState()
-    );
-  };
-  handleRemoveIngredient = (type) => {
-    const oldCount = this.state.ingredient[type];
-    if (oldCount <= 0) {
-      return;
-    }
-    const updatedCount = oldCount - 1;
-    const updatedIngredient = {
-      ...this.state.ingredient,
-    };
-    updatedIngredient[type] = updatedCount;
+  //   this.setState(
+  //     {
+  //       ingredient: updatedIngredient,
+  //       totalPrice: newPrice,
+  //     },
+  //     () => this.updatePurchaseState()
+  //   );
+  // };
+  // handleRemoveIngredient = (type) => {
+  // const oldCount = this.state.ingredient[type];
+  // if (oldCount <= 0) {
+  //   return;
+  // }
+  // const updatedCount = oldCount - 1;
+  // const updatedIngredient = {
+  //   ...this.state.ingredient,
+  // };
+  // updatedIngredient[type] = updatedCount;
 
-    const PriceDeduction = INGREDIENT_PRICES[type];
-    const oldPrice = this.state.totalPrice;
-    let newPrice = oldPrice - PriceDeduction;
+  // const PriceDeduction = INGREDIENT_PRICES[type];
+  // const oldPrice = this.state.totalPrice;
+  // let newPrice = oldPrice - PriceDeduction;
 
-    this.setState(
-      {
-        ingredient: updatedIngredient,
-        totalPrice: newPrice,
-      },
-      () => this.updatePurchaseState()
-    );
-  };
+  // this.setState(
+  //   {
+  //     ingredient: updatedIngredient,
+  //     totalPrice: newPrice,
+  //   },
+  //   () => this.updatePurchaseState()
+  // );
+  // };
   componentDidMount() {
-    axios
-      .get(
-        "https:///burger-builder-ab33e-default-rtdb.firebaseio.com/ingredient.json"
-      )
-      .then((res) => {
-        this.setState({ ingredient: res.data });
-      })
-      .catch((err) => {
-        this.setState({ fetchError: true });
-      });
+    this.props.onInitIngredients();
     this.updatePurchaseState();
   }
   render() {
     //Logic handling Less than burger Ingredients
     const disabledInfo = {
-      ...this.state.ingredient,
+      ...this.props.storeIngredients,
     };
     for (let val in disabledInfo) {
       disabledInfo[val] = disabledInfo[val] <= 0 ? true : false;
     }
     let orderSummary = null;
 
-    if (this.state.loading) {
-      orderSummary = <Spinner />;
-    }
-
     // the burger Component is to have spinner whilst the burger fetches from backend
     // also displays error if error occured in fetch
-    let burger = this.state.fetchError ? (
+    let burger = this.props.fetchError ? (
       <p
         style={{
           marginTop: "70px",
@@ -147,16 +112,16 @@ export class BurgerBuilder extends Component {
     );
 
     // burger Component  and summary enables after data fetch is true
-    if (this.state.ingredient) {
+    if (this.props.storeIngredients) {
       burger = (
         <>
-          <Burger ingredients={this.state.ingredient} />
+          <Burger ingredients={this.props.storeIngredients} />
           <BuildControls
-            handleAddIngredient={this.handleAddIngredient}
-            handleRemoveIngredient={this.handleRemoveIngredient}
+            handleAddIngredient={this.props.onIngredientsAdded}
+            handleRemoveIngredient={this.props.onIngredientsRemove}
             disabled={disabledInfo}
-            price={this.state.totalPrice}
-            purchaseState={this.state.purchaseable}
+            price={this.props.totalPrice}
+            purchaseState={this.updatePurchaseState()}
             purchaseHandler={this.purchaseHandler}
           />
         </>
@@ -164,10 +129,10 @@ export class BurgerBuilder extends Component {
 
       orderSummary = (
         <OrderSummary
-          ingredient={this.state.ingredient}
+          ingredient={this.props.storeIngredients}
           handleCancelOrder={this.handleBackdropClick}
           handleContinueOrder={this.handleContinueOrder}
-          totalPrice={this.state.totalPrice}
+          totalPrice={this.props.totalPrice}
         />
       );
     }
@@ -185,5 +150,34 @@ export class BurgerBuilder extends Component {
     );
   }
 }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    // onIngredientsAdded: (ingName) =>
+    //   dispatch({ type: actionTypes.ADD_INGREDIENT, ingredientName: ingName }),
+    // onIngredientsRemove: (ingName) =>
+    //   dispatch({
+    //     type: actionTypes.REMOVE_INGREDIENT,
+    //     ingredientName: ingName,
+    //   }),
+    onIngredientsAdded: (ingName) =>
+      dispatch(actionTypes.addIngredient(ingName)),
+    onIngredientsRemove: (ingName) =>
+      dispatch(actionTypes.removeIngredient(ingName)),
+    onInitIngredients: () => dispatch(actionTypes.initIngredients()),
+    onInitPurchased: () => dispatch(orderAction.purchaseInit())
 
-export default errorHandler(BurgerBuilder, axios);
+  };
+};
+
+const mapStateToProps = (state) => {
+  return {
+    storeIngredients: state.burgerBuilder.ingredients,
+    totalPrice: state.burgerBuilder.totalPrice,
+    fetchError: state.burgerBuilder.fetchError,
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(errorHandler(BurgerBuilder, axios));

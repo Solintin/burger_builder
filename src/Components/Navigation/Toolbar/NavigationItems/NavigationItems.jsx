@@ -8,10 +8,10 @@ function NavigationItems() {
     <div>
       <ul className="NavigationItems">
         <li>
-          <NavLink to="/">Burger Builder</NavLink>
+          <NavLink exact to="/">Burger Builder</NavLink>
         </li>
         <li>
-          <NavLink to="/order">Checkout</NavLink>
+          <NavLink  to="/orders">Orders</NavLink>
         </li>
       </ul>
     </div>
